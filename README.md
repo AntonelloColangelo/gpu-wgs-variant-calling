@@ -12,14 +12,13 @@ driving one consumer GPU over OcuLink through an external PCIe dock and
 measures what
 that costs, and what it does not.
 
-The short version: **one HG002 whole genome, FASTQ to annotated VCF, in 10 h
+**HG002 whole genome, FASTQ to annotated VCF, in 10 h
 31 m**, benchmarked against the Genome in a Bottle truth set at **F1 0.9921 for
 SNPs and 0.9924 for indels**.
 ![Where the ten and a half hours go](docs/figures/runtime_breakdown.png)
 
-## The constraint
+## The Hardware and Software I used 
 
-| | This machine | Documented requirement |
 |---|---|---|
 | GPU | 1 × RTX 3090, 24 GB, OcuLink external PCIe dock | ≥ 16 GB GPU RAM, CUDA arch 75+ — **met** |
 | Number of GPUs | 1 | single GPU "supported but not recommended" |
@@ -33,13 +32,12 @@ at 27 % of the requirement and threads at 42 %.
 The laptop is a Lenovo Legion 5 15ARH7H with an AMD Ryzen 5 6600H — 6 cores, 12
 threads. Its internal RTX 3060 is disabled so that exactly one GPU can make the calculations.
 
-Operating with an under-specified on memory is not a detail you can ignore. It
-Influenced the entire pipeline.
+Operating with an under-specified on memory is not a detail you can ignore of course. It
+needed further code optimizations.
 <img width="1000" height="1333" alt="hardware_setup(1)" src="https://github.com/user-attachments/assets/d0f229cd-159d-4572-b4a5-c2e0110f1cc8" />
 :
 
-- **`--low-memory` on `fq2bam`** drops BWA-MEM to a single stream. Slower, but it
-  fits.
+- **`--low-memory` on `fq2bam`** drops BWA-MEM to a single stream.
 - **`--memory-limit 8` and `--bwa-normalized-queue-capacity 2`** cap what the
   aligner may hold at once.
 - **One container per phase, not one for the run.** BQSR is a separate `pbrun`
@@ -53,27 +51,22 @@ Influenced the entire pipeline.
 - **64 GB of swap.** Not for speed: so that a spike costs minutes instead of
   killing a run that is eight hours in.
 
-## Where the machine actually strains
+## Where the machine hit the limits
 
 Parabricks samples its own resource use every ten seconds. Plotting the whole
 alignment shows exactly which component is the limit:
 
 ![CPU and memory pinned for the whole alignment](docs/figures/host_bottleneck.png)
 
-The GPU holds a steady 1.58 billion bases per minute while, across the 555
-samples of that phase, **CPU use runs at a median of 98.6 % and memory at a
-median of 90 %, peaking at 99.3 %**  for an hour and a half without let-up.
+The GPU analyzes 1.58 billion bases per minute while, across the 555
+samples of that phase, **CPU use runs at 98.6 % and memory at 90 %, peaking at 99.3 %**  for an hour and a half without let-up.
 `fq2bam` requests 16 CPU worker threads on a host that has 10 (2 are reserved for the base system). 
 
-That single fact justifies every flag in the list above, and it is also the
-honest answer to "why not a bigger GPU?" 
-on this machine a bigger GPU would change very little.
 
-## What the GPU is worth here
+## The objective
 
 The interesting question is not whether a 3090 beats a data-centre card. It is
-whether it beats *not having it*, on the same modest box. So: same machine, same
-reads, same reference, one variable... what does the computing.
+whether is it possible to analyze an entire +30x genome locally ,  within reasonable time frame and accurately enough.
 
 ![CPU versus GPU on the same machine](docs/figures/cpu_vs_gpu.png)
 
@@ -99,9 +92,8 @@ pair for alignment, 28.9 s per Mb for calling:
 
 Treat the right-hand column as a floor rather than an estimate: `samtools sort`
 and `MarkDuplicates` scale worse than linearly as the data grows, and chr20 is
-not the hardest 20 Mb in the genome. The honest summary is that the GPU turns a
-weekend job into an overnight one *on hardware that has no business running this
-software at all*.
+not even the hardest 20 Mb in the genome. The take-home message is that the 3090 turns a
+weekend job into an overnight one *on hardware which could not be used in the first place.
 
 Method, so the comparison can be checked: `scripts/benchmark_cpu_vs_gpu.sh`.
 Alignment is measured on a fixed subset of read pairs, because a CPU run of the
@@ -142,11 +134,6 @@ Supporting metrics, from the same run:
 | Breadth ≥ 20× | 92.52 % of the 2,923,716,080 non-N bases of chr1–22, X, Y |
 | Variant records | 5,098,062 — Ti/Tv 1.929 |
 
-## The run that got it there
-
-Two complete runs exist and both are kept. They differ in one variable, the
-reference genome, and the difference is instructive enough to be worth the
-space.
 
 | | Iteration 1 | Iteration 2 |
 |---|---|---|
@@ -166,14 +153,13 @@ underneath. Inside the MHC on chr6, recall was **1.49 %**.
 
 ![SNP false negatives per chromosome, before and after](hg002_snp_false_negatives.png)
 
-Realigning against the no-ALT analysis set — one variable changed, nothing else —
-moved SNP recall from 96.97 % to **99.26 %**, false negatives from 101,963 to
+Realigning against the no-ALT analysis set moved SNP recall from 96.97 % to **99.26 %**, false negatives from 101,963 to
 **24,740**, and MHC recall from 1.49 % to **97.43 %**. The plan, its acceptance
 criteria and its predictions were written *before* measuring and are in
 [docs/iteration-2-plan.md](docs/iteration-2-plan.md); seven of nine predictions held
 and the two that failed are documented there with the reason.
 
-The fix was a trade, not a free win: 77,223 recovered true positives arrived with
+The fix was a trade: 77,223 recovered true positives arrived with
 6,509 new false positives ( 11.9 true for every false ) and SNP precision fell
 from 99.33 % to 99.16 %.
 
@@ -201,20 +187,9 @@ the defect at minute zero instead of ten hours in.
 ## What this call set is, and what it is not
 
 This is a **benchmarked autosomal call set**. GIAB v4.2.1 covers chr1–22 inside
-high-confidence regions and nothing else, so every accuracy figure above is
-scoped to that and says nothing about X, Y, chrM, ALT contigs or decoys.
+high-confidence regions and nothing else, so every accuracy figure above refers to the autosomal chromosomes but nothing
+about X, Y, chrM, ALT contigs or decoys.
 
-**Sex chromosomes.** The main VCF was produced with a single diploid ploidy
-genome-wide. HG002 is male, so outside the pseudoautosomal regions chrX and chrY
-are haploid and a heterozygous call there is not biologically meaningful — 77.92 %
-of chrY calls outside PAR were heterozygous. A separate haploid call set,
-`output/HG002_NovaSeq_40x_53007e55.haploid.vcf.gz`, comes from re-running
-HaplotypeCaller with `--ploidy 1` between PAR1 and PAR2; all 110,099 genotypes in
-it are haploid and none is heterozygous. It is **not benchmarked**, because GIAB
-does not cover the sex chromosomes.
-
-**chrM is not addressed.** It is represented diploid, which is not a heteroplasmy
-analysis by any definition.
 
 **Loss-of-function calls inside the MHC are not interpretable on a linear
 reference.** Once the MHC is no longer blind it contributes 48 PASS + HIGH records
@@ -273,7 +248,7 @@ docker run --rm --mount "type=bind,source=$PWD,target=/w" \
 
 ## How the code is organised
 
-- `run_parabricks_hg002.sh` — the main recipe, readable top to bottom;
+- `run_parabricks_hg002.sh` — the main script;
 - `scripts/pipeline_functions.sh` — Docker orchestration, checkpoints, provenance;
 - `scripts/postprocess.sh` — filtering, annotation and QC metrics;
 - `scripts/generate_report.py` — HTML report and JSON summary;
@@ -281,7 +256,7 @@ docker run --rm --mount "type=bind,source=$PWD,target=/w" \
 - `scripts/benchmark_cpu_vs_gpu.sh` — the CPU/GPU measurement above;
 - `scripts/make_figures.py` — every figure in this README, plus the square
   summary card in `docs/figures/`;
-- `benchmark_giab.sh` — accuracy benchmark, run separately;
+- `benchmark_giab.sh` — accuracy benchmark, run separately at the end;
 - `Start-HG002.ps1`, `Stop-HG002.ps1`, `Get-PipelineStatus.ps1`,
   `Watch-HG002.ps1`, `Setup-RemoteAccess.ps1` — Windows-side launcher, shutdown,
   monitor, log follower and one-off remote-access setup;
