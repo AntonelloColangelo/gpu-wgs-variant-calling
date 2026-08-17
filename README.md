@@ -1,7 +1,7 @@
 # A human genome on hardware you could actually own
 
-NVIDIA Parabricks is a GPU re-implementation of the GATK Best Practices, built
-for data-centre nodes. Its own
+NVIDIA Parabricks is a NVIDIA re-implementation of the GATK Best Practices, built
+for data-centre with GPUs from the same company  . Its own
 [installation requirements](https://docs.nvidia.com/clara/parabricks/get-started/installation-requirements)
 say that running on a single GPU is *supported but not recommended*, and that a
 single-GPU system should still meet the two-GPU bar: **at least 100 GB of CPU RAM
