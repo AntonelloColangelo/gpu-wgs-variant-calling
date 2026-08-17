@@ -227,7 +227,7 @@ where deliberately truncated copies are rejected.
 `Start-HG002.ps1` registers a Windows scheduled task rather than running in the
 foreground, so a ten-hour run survives the terminal closing and the network
 dropping. That matters because the machine is normally driven remotely, over
-Tailscale with OpenSSH and VS Code Remote; `Setup-RemoteAccess.ps1` configures the
+Tailscale with OpenSSH and VS Code Remote with another laptop; `Setup-RemoteAccess.ps1` configures the
 host side. `Watch-HG002.ps1` only reads the log, so `Ctrl+C` detaches the reader
 and leaves the analysis running.
 
@@ -265,23 +265,15 @@ docker run --rm --mount "type=bind,source=$PWD,target=/w" \
   predictions written before the measurements that tested them.
 
 The FASTQ files, the reference, the databases and the outputs are excluded by
-`.gitignore` . the two FASTQ are 34 and 35 GB, the BAM is 92 GB. What is tracked
-is the code, the documentation and the small result files that make the claims
-above checkable.
+`.gitignore` . the two FASTQ are 34 and 35 GB, the BAM is 92 GB. What is published
+is the code, the documentation and the small result files.
 
 ## Stated limitations
 
-- The machine is outside the official specification on memory and on cores, and
-  the host is the measured bottleneck. Timings here are a lower bound on what the
-  same GPU would do in a properly fed system.
 - BQSR uses the dbSNP set included in the project, not the full known-sites
   bundle from the Broad Best Practices.
-- The residual 4.86 % of MQ0 reads is ordinary multi-mapping on repeats and on
-  the 2,385 decoy contigs that were deliberately kept, not a defect left unfixed.
 - Ti/Tv inside the GIAB scope is 1.9591 for ALL against 2.10 in the truth set.
   Now that most missing true SNPs have been recovered and the ratio has barely
   moved, the gap points at false positives in hard regions.
-- The "40×" in the dataset name is the publisher's label, not a measurement. The
+- The "40×" in the dataset name is the publisher's label. The
   effective coverage is 35.69×.
-- The CPU/GPU comparison extrapolates full-genome CPU time from a measured
-  subset. The extrapolation is stated as such wherever it appears.
