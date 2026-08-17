@@ -31,12 +31,12 @@ The GPU is the only part of this machine that meets the specification. Memory is
 at 27 % of the requirement and threads at 42 %.
 
 The laptop is a Lenovo Legion 5 15ARH7H with an AMD Ryzen 5 6600H — 6 cores, 12
-threads. Its internal RTX 3060 is disabled so that exactly one GPU is in play and
-the measurements mean something. Parabricks 4.7.0-1 runs from the public
-`nvcr.io` image; no NGC key is needed.
+threads. Its internal RTX 3060 is disabled so that exactly one GPU can make the calculations.
 
-Being under-specified on memory is not a detail you can configure away. It
-decides the shape of the whole pipeline:
+Operating with an under-specified on memory is not a detail you can ignore. It
+Influenced the entire pipeline.
+<img width="1000" height="1333" alt="hardware_setup(1)" src="https://github.com/user-attachments/assets/d0f229cd-159d-4572-b4a5-c2e0110f1cc8" />
+:
 
 - **`--low-memory` on `fq2bam`** drops BWA-MEM to a single stream. Slower, but it
   fits.
@@ -63,8 +63,7 @@ alignment shows exactly which component is the limit:
 The GPU holds a steady 1.58 billion bases per minute while, across the 555
 samples of that phase, **CPU use runs at a median of 98.6 % and memory at a
 median of 90 %, peaking at 99.3 %**  for an hour and a half without let-up.
-`fq2bam` requests 16 CPU worker threads on a host that has 10. The accelerator is
-waiting on the box around it.
+`fq2bam` requests 16 CPU worker threads on a host that has 10 (2 are reserved for the base system). 
 
 That single fact justifies every flag in the list above, and it is also the
 honest answer to "why not a bigger GPU?" 
