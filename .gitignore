@@ -1,4 +1,4 @@
-# Dati genomici e risultati troppo grandi per GitHub
+# Genomic inputs and outputs are too large for GitHub.
 *.fastq
 *.fastq.gz
 *.fq
@@ -11,73 +11,13 @@
 *.vcf.gz
 *.vcf.gz.tbi
 ref/
-snpEff_data/
-output/*
-reports/*
-
-# Eccezione: il report e il riepilogo dello smoke test sono piccoli e servono
-# come prova che la pipeline gira davvero.
-!reports/HG002_NovaSeq_smoke_test_Report.html
-!reports/HG002_NovaSeq_smoke_test_summary.json
-
-# Eccezione: il riepilogo del benchmark GIAB pesa pochi kB ed e' il numero che
-# rende verificabile ogni affermazione di accuratezza nel README.
-# Gli altri output di hap.py (VCF annotato, ROC, metriche) restano esclusi.
-#
-# Da luglio 2026 hap.py scrive in reports/giab/<prefisso>/, una cartella per
-# run valutata, perche' con un percorso fisso il secondo benchmark cancellava
-# il primo. Le eccezioni devono quindi scendere di un livello: in git non si
-# puo' re-includere un file se una cartella superiore resta esclusa, per questo
-# servono anche le righe sulle cartelle.
-!reports/giab/
-reports/giab/*
-!reports/giab/*/
-reports/giab/*/*
-!reports/giab/*/giab_benchmark.json
-!reports/giab/*/happy.summary.csv
-
-# Eccezione, stessa logica: i tempi del confronto CPU/GPU pesano meno di un kB
-# e sono la fonte del grafico docs/figures/cpu_vs_gpu.png. I log della misura
-# restano in logs/bench/, che non e' versionato.
-!reports/cpu_vs_gpu/
-reports/cpu_vs_gpu/*
-!reports/cpu_vs_gpu/benchmark.tsv
-!reports/cpu_vs_gpu/benchmark.json
-!reports/cpu_vs_gpu/concordance.tsv
-
-# I log restano in locale e non vengono versionati. Erano tracciati fino a
-# luglio 2026 e pesavano il 70 % del repo, per giunta con i file sbagliati: i
-# log conservati erano quelli dei tentativi superati del 24-25 luglio, mentre
-# quelli delle run pubblicate non erano tracciati affatto. Le prove di
-# accuratezza stanno in reports/giab/, non qui.
+output/
 logs/
 
-# Binary documents: the useful content now lives in docs/data-sources.md
-*.docx
-
-# Dispensa universitaria: materiale didattico personale in italiano, generato da
-# questo repository ma non parte della pipeline. Resta in locale perche' il
-# repository e' pubblico e in inglese, e 155 KB di generatore di .docx in
-# scripts/ nascondono il codice che conta.
-docs/PROMPT_dispensa_v2.md
-scripts/build_dispensa_v2.py
-scripts/build_dispensa_v2_figures.py
-reports/Dispensa_*
-
-# File temporanei
+# Local and temporary files.
 *.partial
 *.partial.*
 __pycache__/
 *.pyc
 .DS_Store
 Thumbs.db
-
-
-# Log di console del benchmark GIAB
-logs/giab_benchmark.log
-
-# Dipendenze Python locali, non fanno parte del progetto.
-# .python-packages/ sono wheel Windows, .python-packages-linux/ quelli che usa
-# make_figures.py dentro il container: si reinstallano con una riga, vedi README.
-.python-packages/
-.python-packages-linux/
