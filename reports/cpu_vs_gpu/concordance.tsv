@@ -1,0 +1,5 @@
+gpu_sites	40022
+cpu_sites	40022
+shared_sites	40020
+gpu_only	2
+cpu_only	2

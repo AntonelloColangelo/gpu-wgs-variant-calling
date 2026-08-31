@@ -1,0 +1,58 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+    <title>Report HG002_NovaSeq_smoke_test</title><style>
+    :root{--blue:#22577a;--dark:#173b53;--gold:#b78318;--pale:#f3f7f9;--line:#d8e1e7;--ink:#1e2933}
+    *{box-sizing:border-box}body{font:15px/1.5 Arial,sans-serif;color:var(--ink);margin:0;background:#eef3f6}
+    main{max-width:1120px;margin:32px auto;background:white;padding:48px 56px;box-shadow:0 5px 25px #2335}
+    h1{font-size:34px;color:var(--dark);margin:0 0 8px}h2{color:var(--blue);border-bottom:2px solid var(--line);padding-bottom:8px;margin-top:38px}
+    h3{color:var(--dark)}.subtitle{color:#66737d;font-size:18px}.verdict{padding:16px 20px;background:#dfedf5;border-left:7px solid var(--blue);font-weight:bold;margin:24px 0}
+    .warning{background:#f8edcf;border-left-color:var(--gold)}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .card{background:var(--pale);padding:16px;border-radius:6px}.card b{display:block;font-size:24px;color:var(--dark)}
+    table{border-collapse:collapse;width:100%;margin:12px 0 22px}th{background:var(--dark);color:white;text-align:left}th,td{padding:8px 10px;border:1px solid var(--line)}
+    .bar-row{display:grid;grid-template-columns:150px 1fr 110px;gap:10px;align-items:center;margin:7px 0}.track{height:18px;background:#e8eef2;border-radius:4px;overflow:hidden}
+    .track i{display:block;height:100%;background:var(--blue)}.bar-row:nth-child(2n) i{background:#39799d}.sources{font-family:Consolas,monospace;font-size:12px}
+    @media(max-width:800px){main{margin:0;padding:24px}.cards{grid-template-columns:1fr 1fr}.bar-row{grid-template-columns:90px 1fr 85px}}
+    @media print{body{background:white}main{box-shadow:none;margin:0;max-width:none}h2{break-after:avoid}table,.bar-row{break-inside:avoid}}
+    </style></head><body><main>
+    <p class="subtitle">HG002 · smoke test (chr20:1–1.000.000) · NVIDIA Parabricks</p>
+    <h1>Report automatico della pipeline germinale</h1>
+    <p>Generato il 25/07/2026 alle 20:55. Reference GRCh38/assembly38.</p>
+    <div class="verdict ">ESITO TECNICO: COMPLETATO. Benchmark GIAB escluso per scelta progettuale.</div>
+    <div class="cards"><div class="card"><span>Read mappate</span><b>99,75%</b></div><div class="card"><span>Profondità media</span><b>0.10×</b></div><div class="card"><span>Breadth ≥1×</span><b>9,16%</b></div><div class="card"><span>Varianti PASS</span><b>100,00%</b></div></div>
+
+    <h2>1. Input e preflight</h2>
+    <table><thead><tr><th>Controllo</th><th>Risultato</th></tr></thead><tbody><tr><td>Coppie FASTQ totali</td><td>1.000.000</td></tr><tr><td>Coppie FASTQ campionate per ID</td><td>100.000</td></tr><tr><td>Integrità gzip completa</td><td>verificata</td></tr><tr><td>Identificativi R1/R2</td><td>coerenti</td></tr><tr><td>Struttura FASTQ</td><td>valida</td></tr><tr><td>Lunghezza read osservata</td><td>151–151 bp</td></tr></tbody></table>
+
+    <h2>2. Allineamento, pairing e duplicati</h2>
+    <table><thead><tr><th>Metrica</th><th>Valore</th></tr></thead><tbody><tr><td>Read totali</td><td>2.009.953</td></tr><tr><td>Read mappate</td><td>2.004.948 (99,75%)</td></tr><tr><td>Properly paired</td><td>1.958.358 (97,92%)</td></tr><tr><td>Singleton</td><td>3.043 (0,15%)</td></tr><tr><td>Duplicati</td><td>171.100 (8,55%)</td></tr><tr><td>Percent duplication Picard</td><td>0.085765</td></tr><tr><td>Optical duplicate pairs</td><td>13489</td></tr></tbody></table>
+
+    <h2>3. Copertura e uniformità</h2>
+    <p>Profondità media pesata sui cromosomi principali: <b>0,10×</b>.
+    Breadth: <b>9,03%</b>. CV autosomico delle read/Mb: <b>0,00%</b>.</p>
+    <h3>Soglie di copertura</h3><div class="bar-row"><span>≥1×</span><div class="track"><i style="width:9.16%"></i></div><b>9.16%</b></div><div class="bar-row"><span>≥10×</span><div class="track"><i style="width:0.50%"></i></div><b>0.00%</b></div><div class="bar-row"><span>≥20×</span><div class="track"><i style="width:0.50%"></i></div><b>0.00%</b></div><div class="bar-row"><span>≥30×</span><div class="track"><i style="width:0.50%"></i></div><b>0.00%</b></div>
+    <h3>Read mappate per megabase</h3><div class="bar-row"><span>chr20</span><div class="track"><i style="width:100.00%"></i></div><b>708.00</b></div>
+    <table><thead><tr><th>Cromosoma</th><th>Read</th><th>Breadth</th><th>Depth</th><th>Read/Mb</th></tr></thead><tbody><tr><td>chr20</td><td>708</td><td>9,03%</td><td>0,10</td><td>708,0</td></tr></tbody></table>
+
+    <h2>4. Variant calling e hard filtering</h2>
+    <table><thead><tr><th>Metrica</th><th>VCF grezzo</th><th>VCF hard-filtered</th></tr></thead><tbody><tr><td>Record</td><td>12</td><td>12</td></tr><tr><td>Alleli SNP</td><td>12</td><td>12</td></tr><tr><td>Alleli indel/complessi</td><td>0</td><td>0</td></tr><tr><td>Siti multiallelici</td><td>0</td><td>0</td></tr><tr><td>Ti/Tv</td><td>1,400</td><td>1,400</td></tr><tr><td>DP medio dei genotipi</td><td>2,08</td><td>2,08</td></tr><tr><td>Record PASS</td><td>12</td><td>12</td></tr></tbody></table>
+    <p>Il VCF grezzo è conservato integralmente. Nel VCF hard-filtered i record non conformi sono marcati nel campo FILTER e non eliminati.</p>
+
+    <h2>5. Annotazione snpEff</h2>
+    <p>Prodotti VCF annotato, indice, statistiche snpEff e tabella delle varianti HIGH.
+    Record con contig non riconosciuto: <b>0</b>.
+    Varianti PASS con impatto HIGH: <b>0</b>.</p>
+
+    <h2>Tempi di esecuzione</h2><div class="bar-row"><span>1_fastq_integrity</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>2_fq2bam</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>2b_bam_check</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>3_bqsr</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>4_haplotypecaller</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>5_genotypegvcf</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>6_hardfilter</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>7_annotation</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div><div class="bar-row"><span>8_qc</span><div class="track"><i style="width:0.50%"></i></div><b>0.00 min</b></div>
+    <table><thead><tr><th>Step</th><th>Minuti</th><th>Stato</th></tr></thead><tbody><tr><td>1_fastq_integrity</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>2_fq2bam</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>2b_bam_check</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>3_bqsr</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>4_haplotypecaller</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>5_genotypegvcf</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>6_hardfilter</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>7_annotation</td><td>0.0</td><td>SKIPPED_VALID</td></tr><tr><td>8_qc</td><td>0.0</td><td>SKIPPED_VALID</td></tr></tbody></table>
+
+    <h2>Limiti e interpretazione</h2>
+    <ul><li>Il benchmark GIAB non è stato eseguito: precision, recall e F1 non sono misurati.</li><li>Gli hard filter sono controlli tecnici conservativi e non sostituiscono VQSR o una validazione clinica.</li><li>BQSR usa il dbSNP disponibile nel progetto; non è un bundle Broad completo di known-sites.</li><li>snpEff non ha segnalato contig non riconosciuti.</li><li>Le varianti annotate non costituiscono interpretazione clinica.</li></ul>
+
+    <h2>Output e tracciabilità</h2>
+    <div class="sources"><p>output/HG002_NovaSeq_smoke_test.bam (+ .bai)</p>
+    <p>output/HG002_NovaSeq_smoke_test.g.vcf.gz (+ .tbi)</p>
+    <p>output/HG002_NovaSeq_smoke_test.vcf.gz (+ .tbi)</p>
+    <p>output/HG002_NovaSeq_smoke_test.hardfiltered.vcf.gz (+ .tbi)</p>
+    <p>output/HG002_NovaSeq_smoke_test_annotated.vcf.gz (+ .tbi)</p>
+    <p>output/HG002_NovaSeq_smoke_test_high_impact_variants.txt</p>
+    <p>reports/HG002_NovaSeq_smoke_test_summary.json</p></div>
+    </main></body></html>

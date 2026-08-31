@@ -1,0 +1,8 @@
+phase	seconds	note
+prep_subset	93	extraction of 10000000 pairs
+A1_gpu_fq2bam	205	align+sort+markdup on GPU
+A2a_cpu_bwa_sort	1358	align+sort on 10 threads
+A2b_cpu_markdup	138	duplicate marking on CPU
+A2_cpu_total	1496	CPU path equivalent to fq2bam, total
+B1_gpu_haplotypecaller	122	gVCF over chr20:1-20000000, real coverage
+B2_cpu_haplotypecaller	578	gVCF over chr20:1-20000000, real coverage

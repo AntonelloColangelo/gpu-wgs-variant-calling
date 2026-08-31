@@ -1,0 +1,42 @@
+{
+  "truth_set": "HG002 GIAB v4.2.1 GRCh38 (chr1-22, high-confidence BED)",
+  "engine": "vcfeval",
+  "results": {
+    "INDEL_ALL": {
+      "recall": 0.9736,
+      "precision": 0.994,
+      "f1": 0.9837,
+      "truth_total": 525469.0,
+      "tp": 511574.0,
+      "fn": 13895.0,
+      "fp": 3207.0
+    },
+    "INDEL_PASS": {
+      "recall": 0.9734,
+      "precision": 0.9947,
+      "f1": 0.9839,
+      "truth_total": 525469.0,
+      "tp": 511476.0,
+      "fn": 13993.0,
+      "fp": 2865.0
+    },
+    "SNP_ALL": {
+      "recall": 0.9697,
+      "precision": 0.9933,
+      "f1": 0.9814,
+      "truth_total": 3365127.0,
+      "tp": 3263164.0,
+      "fn": 101963.0,
+      "fp": 21931.0
+    },
+    "SNP_PASS": {
+      "recall": 0.9574,
+      "precision": 0.9974,
+      "f1": 0.977,
+      "truth_total": 3365127.0,
+      "tp": 3221814.0,
+      "fn": 143313.0,
+      "fp": 8348.0
+    }
+  }
+}

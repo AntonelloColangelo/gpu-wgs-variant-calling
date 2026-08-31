@@ -1,0 +1,86 @@
+{
+  // Attivita da lanciare con Terminal > Run Task, oppure Ctrl+Shift+P e
+  // "Tasks: Run Task". Girano nel terminale integrato di VSCode.
+  //
+  // Sono tutte di sola lettura: la pipeline gira come attivita pianificata di
+  // Windows e scrive su file. Chiudere il terminale o premere Ctrl+C stacca il
+  // lettore e non ferma l'analisi. Per fermarla davvero: .\Stop-HG002.ps1
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "HG002: segui la pipeline",
+      "detail": "Log complessivo della run in corso, in diretta",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/Watch-HG002.ps1"
+      ],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "HG002: segui lo step in corso",
+      "detail": "Log dettagliato dello step in esecuzione adesso (fq2bam, BQSR, HaplotypeCaller...)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/Watch-HG002.ps1", "-CurrentStep"
+      ],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "HG002: monitor con tempi e stime",
+      "detail": "Get-PipelineStatus in modalita continua: checkpoint, durate, risorse",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/Get-PipelineStatus.ps1", "-Watch"
+      ],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "HG002: elenca gli step della run",
+      "detail": "Quali log di step esistono, con dimensione e ultimo aggiornamento",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile", "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/Watch-HG002.ps1", "-List"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": true,
+        "panel": "shared",
+        "clear": true
+      }
+    }
+  ]
+}

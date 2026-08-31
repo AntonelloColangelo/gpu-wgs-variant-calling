@@ -1,0 +1,105 @@
+{
+  "generated_at": "2026-07-25T20:55:08",
+  "sample": "HG002",
+  "prefix": "HG002_NovaSeq_smoke_test",
+  "mode": "smoke",
+  "status": "COMPLETATO",
+  "flagstat": {
+    "total": 2009953,
+    "primary": 2000000,
+    "mapped": 2004948,
+    "mapped_pct": 99.75,
+    "properly_paired": 1958358,
+    "properly_paired_pct": 97.92,
+    "singletons": 3043,
+    "singletons_pct": 0.15,
+    "duplicates": 171100,
+    "duplicates_pct": 8.555
+  },
+  "duplicate_metrics": {
+    "LIBRARY": "HG002_PCR_FREE",
+    "UNPAIRED_READS_EXAMINED": "3043",
+    "READ_PAIRS_EXAMINED": "995976",
+    "SECONDARY_OR_SUPPLEMENTARY_RDS": "9953",
+    "UNMAPPED_READS": "5005",
+    "UNPAIRED_READ_DUPLICATES": "382",
+    "READ_PAIR_DUPLICATES": "85359",
+    "READ_PAIR_OPTICAL_DUPLICATES": "13489",
+    "PERCENT_DUPLICATION": "0.085765",
+    "ESTIMATED_LIBRARY_SIZE": "6383811"
+  },
+  "mean_depth_primary": 0.102153,
+  "breadth_primary": 9.0314,
+  "autosomal_read_per_mb_cv_pct": 0.0,
+  "depth_thresholds": {
+    "total_bases": "939275",
+    "ge1": "86025",
+    "ge10": "0",
+    "ge20": "0",
+    "ge30": "0",
+    "pct_ge1": "9.158700",
+    "pct_ge10": "0.000000",
+    "pct_ge20": "0.000000",
+    "pct_ge30": "0.000000"
+  },
+  "raw_vcf": {
+    "records": 12,
+    "snp_alleles": 12,
+    "indel_complex_alleles": 0,
+    "multiallelic": 0,
+    "transitions": 7,
+    "transversions": 5,
+    "filters": {
+      ".": 12
+    },
+    "called_genotypes": 12,
+    "het": 0,
+    "hom_alt": 12,
+    "dp_sum": 25,
+    "dp_count": 12,
+    "sample": "HG002",
+    "titv": 1.4,
+    "mean_dp": 2.08
+  },
+  "hardfiltered_vcf": {
+    "records": 12,
+    "snp_alleles": 12,
+    "indel_complex_alleles": 0,
+    "multiallelic": 0,
+    "transitions": 7,
+    "transversions": 5,
+    "filters": {
+      "PASS": 12
+    },
+    "called_genotypes": 12,
+    "het": 0,
+    "hom_alt": 12,
+    "dp_sum": 25,
+    "dp_count": 12,
+    "sample": "HG002",
+    "titv": 1.4,
+    "mean_dp": 2.08
+  },
+  "annotated_vcf": {
+    "records": 12,
+    "snp_alleles": 12,
+    "indel_complex_alleles": 0,
+    "multiallelic": 0,
+    "transitions": 7,
+    "transversions": 5,
+    "filters": {
+      "PASS": 12
+    },
+    "called_genotypes": 12,
+    "het": 0,
+    "hom_alt": 12,
+    "dp_sum": 25,
+    "dp_count": 12,
+    "sample": "HG002",
+    "titv": 1.4,
+    "mean_dp": 2.08
+  },
+  "pass_high_records": 0,
+  "annotation_chromosome_not_found": 0,
+  "giab_benchmark_performed": false
+}
