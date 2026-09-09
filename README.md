@@ -4,13 +4,11 @@ NVIDIA Parabricks is a NVIDIA re-implementation of the GATK Best Practices, buil
 for data-centre with GPUs from the same company  . Its own
 [installation requirements](https://docs.nvidia.com/clara/parabricks/get-started/installation-requirements)
 say that running on a single GPU is *supported but not recommended*, and that a
-single-GPU system should still meet the two-GPU bar: **at least 100 GB of CPU RAM
+single-GPU system should still meet the two-GPU requirement: **at least 100 GB of CPU RAM
 and at least 24 CPU threads**.
 
-This repository runs it on a gaming laptop with 31 GB of RAM and 12 threads,
-driving one consumer GPU over OcuLink through an external PCIe dock and
-measures what
-that costs, and what it does not.
+This repository runs it on a gaming laptop with 32 GB of RAM and 12 threads,
+driving one consumer GPU data over OcuLink through an external PCIe dock .
 
 **HG002 whole genome, FASTQ to annotated VCF, in 10 h
 31 m**, benchmarked against the Genome in a Bottle truth set at **F1 0.9921 for
