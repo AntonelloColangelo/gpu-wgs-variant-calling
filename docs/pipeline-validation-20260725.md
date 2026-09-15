@@ -1,3 +1,5 @@
+> Historical record: code paths and validation claims refer to the [original automated workflow](https://github.com/AntonelloColangelo/gpu-wgs-variant-calling/tree/f222fdf), not the simplified Bash scripts.
+
 # Validation of the Bash pipeline
 
 Date: 25 July 2026  

@@ -4,8 +4,8 @@
 **Same BAM, same truth set, same BED — the only variable is the variant caller.**
 **Full interactive report (Italian)**: [`report.html`](report.html)
 
-This uses the same germline pipeline as the rest of this repository, run
-against a second GIAB sample, with one extra step: [`run_deepvariant.sh`](run_deepvariant.sh)
+The historical experiment used the same germline pipeline on a second GIAB
+sample. The simplified command is now published in [`run_deepvariant.sh`](run_deepvariant.sh)
 calls DeepVariant on the same BAM HaplotypeCaller already produced, so the
 two callers are compared on identical input. Raw hap.py evidence for both
 runs is under [`giab/`](giab).
@@ -91,10 +91,6 @@ rejects the call independently, without needing to.
 - Hard filtering and VQSR become moot: DeepVariant's unfiltered precision
   (0.9986) beats HaplotypeCaller's best filtered result. Its `ALL` and
   `PASS` benchmark rows are identical.
-- If DeepVariant becomes the pipeline's caller, its name has to enter the
-  provenance key that names checkpoints and volumes — it doesn't yet, so a
-  caller swap today would silently reuse and report the previous caller's
-  checkpoints as success.
 - The benchmark still only judges chr1–22 inside the high-confidence BED:
   `Frac_NA` shows 13% of called SNPs and 44% of called indels aren't judged
   at all, and chrX/chrY/chrM have no truth set here.
@@ -106,3 +102,28 @@ rejects the call independently, without needing to.
 high-confidence regions. Reference GCA_000001405.15, no ALT contigs, hs38d1
 decoy. ClinVar release 2026-07-28. HG003 is a public reference sample;
 reported variants are not a clinical interpretation.*
+
+## Running the simplified commands
+
+Run from the repository root. Prepare HG003 FASTQ and its actual read group,
+then edit those inputs in `run_parabricks.sh` and run it to produce the BAM and
+HaplotypeCaller VCF. The defaults in that script describe HG002, not HG003.
+Run DeepVariant on the HG003 BAM with:
+
+```bash
+bash hg003-deepvariant-vs-gatk/run_deepvariant.sh
+```
+
+Compare both VCFs using the matching HG003 truth set:
+
+```bash
+SAMPLE=HG003 BENCH_LABEL=HG003_hc_simple bash benchmark_giab.sh
+SAMPLE=HG003 QUERY_VCF=output/HG003_deepvariant/HG003.deepvariant.vcf.gz BENCH_LABEL=HG003_dv_simple bash benchmark_giab.sh
+```
+
+These commands use fresh output directories. The simplified scripts have not
+been rerun on a whole genome. The tables and HTML report above are historical
+results, and references to the old automation in that report describe the
+original experiment. Individual clinical assertions in the historical report
+are exploratory and have not been independently validated by this code cleanup;
+caller agreement or disagreement alone does not establish biological truth.

@@ -1,75 +1,148 @@
-# 1) FQ2BAM
+# Simple Parabricks commands
 
-Teaching notes on the two main steps. The commands below run against the reduced
-FASTQ files in `smoke/` (one million read pairs): they exist to show the
-mechanics, not to produce the final result. The real analysis is launched with
-`.\Start-HG002.ps1`, which adds BQSR, hard filtering, annotation and integrity
-checks.
+Run commands from the repository root in a **Bash** terminal on Linux or Ubuntu
+WSL2. On WSL2, keep the working directory in the Linux filesystem, for example
+`~/gpu-wgs-variant-calling`, rather than `/mnt/c/`.
 
-Run these from Ubuntu WSL2. Change into the project directory first, so that
-`$(pwd)` expands to `/mnt/c/HG002 Parabricks Experiment`.
+## 1. Prerequisites
 
-In the `--volume` flags, the path to the left of the colon is the host path
-(`/mnt/c/...`); the one on the right exists only inside the container. From that
-point on `pbrun` must be given `/workdir` and `/outputdir`, never `/mnt/c/...`.
-The project is mounted read-only (`:ro`) so the reference and the FASTQ files
-cannot be touched by accident.
+- NVIDIA GPU, compatible driver and Docker configured for GPU access.
+- Sufficient RAM and disk space for whole-genome alignment. The historical
+  experiment used a 24 GB RTX 3090 with memory-saving options and 64 GB swap;
+  those measurements do not guarantee a run on another machine.
+- Parabricks image pinned to the version used in the project:
 
 ```bash
-cd "/mnt/c/HG002 Parabricks Experiment"
-mkdir -p output/tmp
-
-docker run \
-    --gpus all \
-    --rm \
-    --volume "$(pwd)":/workdir:ro \
-    --volume "$(pwd)/output":/outputdir \
-  nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1 \
-  pbrun fq2bam \
-    --ref /workdir/ref/Homo_sapiens_assembly38.fasta \
-    --in-fq /workdir/smoke/HG002_NovaSeq_smoke_R1.fastq.gz /workdir/smoke/HG002_NovaSeq_smoke_R2.fastq.gz '@RG\tID:HV3C3DSXX.2\tPL:ILLUMINA\tPM:NovaSeq6000\tLB:HG002_PCR_FREE\tPU:HV3C3DSXX.2.AGCGATAG+AGGCGAAG\tSM:HG002' \
-    --out-bam /outputdir/fq2bam_output.bam \
-    --tmp-dir /outputdir/tmp \
-    --low-memory
+docker pull nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1
 ```
 
-Both FASTQ files go on the same `--in-fq` flag: given only one, Parabricks
-treats the run as single-end. The third element is the read group — without it
-the BAM comes out with a generic `@RG` and the sample is not named `HG002`.
+The following reference-preparation commands also require `curl`, `gzip`,
+`bwa`, `samtools`, `gatk` and `tabix` in the Bash environment. They are setup
+tools, not dependencies of PowerShell or a local custom Docker image.
 
-If you get an out-of-memory error make sure your computer has enough RAM, and
-that large amounts of memory aren't being used by other programs.
+## 2. Prepare inputs
 
-
-# 2) HAPLOTYPECALLER
+The [data sources](data-sources.md) describe the original HG002 files and
+reference. Place the two HG002 FASTQ files in the repository root, using the
+names shown in `run_parabricks.sh`. Verify downloads using their source checksums
+when available, and check compressed-file integrity:
 
 ```bash
-cd "/mnt/c/HG002 Parabricks Experiment"
-
-docker run \
-    --gpus all \
-    --rm \
-    --volume "$(pwd)":/workdir:ro \
-    --volume "$(pwd)/output":/outputdir \
-  nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1 \
-  pbrun haplotypecaller \
-    --ref /workdir/ref/Homo_sapiens_assembly38.fasta \
-    --in-bam /outputdir/fq2bam_output.bam \
-    --out-variants /outputdir/variants.vcf \
-    -L chr20:1-1000000 \
-    --tmp-dir /outputdir/tmp \
-    --htvc-low-memory
+gzip -t HG002.novaseq.pcr-free.40x.R1.fastq.gz
+gzip -t HG002.novaseq.pcr-free.40x.R2.fastq.gz
 ```
 
-In HaplotypeCaller the flag is called `--htvc-low-memory`; `--low-memory` exists
-only for fq2bam. `-L` restricts calling to a single window: without it,
-HaplotypeCaller scans the whole genome even when there are very few reads. Note
-that `-L` does not exist for fq2bam — alignment is always genome-wide, so
-restricting regions saves no time on the expensive step.
+For a new setup, download the no-ALT reference and prepare its indexes. Run once:
 
-The outputs are .bam, .bam.bai, .txt and .vcf files.
-The VCF with the variants should show lines like this:
+```bash
+mkdir -p ref
+curl -fL --retry 3 -o ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+gzip -t ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+gunzip ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+bwa index ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna
+samtools faidx ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna
+gatk CreateSequenceDictionary -R ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna -O ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.dict
+curl -fL --retry 3 -o ref/Homo_sapiens_assembly38.dbsnp138.vcf.gz https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+gzip -t ref/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+tabix -p vcf ref/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+```
 
+Building BWA indexes takes time. Pre-built NCBI indexes are another option,
+listed in the data sources. The historical `scripts/fetch_reference_noalt.sh`
+was written for the original environment and additionally requires its custom
+Docker image and the old reference `.fai`; it is not the fresh-setup route above.
+
+## 3. Read the four commands
+
+[run_parabricks.sh](../run_parabricks.sh) contains the full commands without
+helper functions, checkpoints or scheduling:
+
+| Command | Input | Output |
+|---|---|---|
+| `pbrun fq2bam` | Paired FASTQ and reference | Sorted BAM with duplicates marked |
+| `pbrun bqsr` | BAM, reference and known sites | Recalibration table |
+| `pbrun haplotypecaller` | BAM, reference and recalibration table | gVCF |
+| `pbrun genotypegvcf` | gVCF and reference | Variant VCF |
+
+`--in-fq` receives R1, R2 and the read group together. The default read group
+belongs to HG002; when changing samples, update `SAMPLE`, both FASTQ paths and
+all read-group metadata, including `SM`. For multiple lanes, adapt `--in-fq`
+to the actual library and lane structure rather than reusing the HG002 group.
+All input paths and `OUT` are **relative to the repository root**.
+
+The mount `$PWD:/input:ro` exposes inputs read-only inside Docker. The output
+folder is mounted separately at `/output`; all `pbrun` paths use those container
+paths. BQSR runs separately to release alignment memory before recalibration.
+HaplotypeCaller uses the recalibration table while reading the original BAM.
+
+```bash
+bash run_parabricks.sh
 ```
-chr1    16378   .   T   C   45.28   .   AC=2;AF=1.00;AN=2;DP=2;ExcessHet=3.0103;FS=0.000;MLEAC=1;MLEAF=0.500;MQ=23.55;QD=22.64;SOR=2.303    GT:AD:DP:GQ:PL  1/1:0,2:2:6:57,6,0
+
+The script runs in the foreground and creates a fresh output directory. If it
+fails, inspect the error and the outputs before deciding which command to rerun.
+It has no automatic resume. Keep the terminal open while it runs. A successful
+exit means the tools completed, not that biological accuracy was validated.
+
+## 4. Inspect the outputs
+
+With `samtools` and `bcftools` available locally:
+
+```bash
+samtools quickcheck -v output/HG002_haplotypecaller/HG002.bam
+samtools flagstat output/HG002_haplotypecaller/HG002.bam
+bcftools stats output/HG002_haplotypecaller/HG002.vcf.gz
 ```
+
+These are technical checks; the GIAB comparison below evaluates accuracy within
+its defined benchmark regions.
+
+## 5. Run the accuracy benchmark separately
+
+`benchmark_giab.sh` needs Docker, Bash, GNU coreutils, `curl` and Python 3.
+It downloads the matching GIAB truth set and runs hap.py in its own container.
+The reference must match the one used for calling. The default sample is HG002:
+
+```bash
+bash benchmark_giab.sh
+```
+
+For another VCF, specify a path inside the repository and a new result label:
+
+```bash
+SAMPLE=HG003 QUERY_VCF=output/HG003_deepvariant/HG003.deepvariant.vcf.gz BENCH_LABEL=HG003_dv_simple bash benchmark_giab.sh
+```
+
+Only HG002 and HG003 are supported. Results go to `reports/giab/<BENCH_LABEL>/`.
+An existing directory is rejected to preserve earlier results. Set a new label
+to repeat a benchmark. The new core script creates an unfiltered VCF, so its
+`PASS` results are not directly equivalent to the historical filtered call set.
+
+## 6. DeepVariant on the same alignment
+
+Edit `SAMPLE` and `BAM` in
+[run_deepvariant.sh](../hg003-deepvariant-vs-gatk/run_deepvariant.sh), then run:
+
+```bash
+bash hg003-deepvariant-vs-gatk/run_deepvariant.sh
+```
+
+The default is HG003. Use the sorted, duplicate-marked BAM with original base
+qualities and its index. This script makes one `pbrun deepvariant` call and
+writes to a separate output folder. It does not require `config/sample.env`.
+
+## 7. Historical post-processing
+
+`scripts/postprocess.sh` retains the filtering, snpEff annotation and QC code
+used for the original results. It expects `/project` and `/work` mounts, GATK,
+samtools, snpEff and other tools from the original `bioinfo-codeserver:latest`
+image, plus a prepared snpEff database. Its image recipe is not published here.
+`scripts/generate_report.py` expects the original collection of QC files and
+logs. They are retained as analysis evidence, not automatically run by the
+simple script. Neither the simplified scripts nor these historical dependencies
+have been executed as part of this repository cleanup.
+
+## Documentation
+
+- [NVIDIA Parabricks 4.7.0 tutorials](https://docs.nvidia.com/clara/parabricks/4.7.0/tutorials.html)
+- [NVIDIA whole-genome calling example](https://docs.nvidia.com/clara/parabricks/latest/tutorials/how-tos/wholegenomegermlinesmallvariants.html)

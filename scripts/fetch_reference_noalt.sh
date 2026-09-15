@@ -225,5 +225,4 @@ echo "Names and lengths of the primary chromosomes unchanged."
 echo "dbSNP, snpEff and the GIAB BED stay valid without modification."
 
 msg "Reference ready: ${REF}"
-echo "The pipeline already uses it by default. To go back to the old one:"
-echo "  HG002_REF_NAME=Homo_sapiens_assembly38.fasta bash run_parabricks_hg002.sh --preflight"
+echo "The simple run_parabricks.sh script uses this reference."

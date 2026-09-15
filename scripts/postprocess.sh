@@ -6,9 +6,9 @@ set -Eeuo pipefail
 PROJECT="/project"
 WORK="/work"
 
-# The reference arrives from the environment: run_tools and tools_quiet in
-# pipeline_functions.sh pass it, so there is a single place to change it. The
-# default is only for someone running this script by hand.
+# Historical post-processing commands, kept for the published analysis.
+# When running manually, mount inputs at /project and outputs at /work.
+# The REFERENCE environment variable can override the default below.
 REFERENCE="${REFERENCE:-${PROJECT}/ref/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna}"
 REFERENCE_DICT="${REFERENCE_DICT:-${REFERENCE%.*}.dict}"
 

@@ -16,8 +16,8 @@ https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/md5checksums.txt
 ```
 
-The BWA indexes are published pre-built, so `bwa index` is never run locally:
-it would cost about an hour of CPU for an identical result. The `.dict` is
+The historical run used published pre-built BWA indexes. The simple setup guide
+also shows how to build them locally with `bwa index`. The `.dict` is
 generated with `samtools dict`. Integrity is checked three ways: the MD5
 declared by NCBI, a `gzip -t` on the archives, and a regenerated `.fai`
 compared byte for byte against the published one.
@@ -56,17 +56,9 @@ https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Homo
 > reference keeps its 261 ALT contigs while BWA has no way to know they are
 > alternates.
 >
-> **Resolved in iteration 2** by switching to the no-ALT analysis set above,
-> not by adding the `.alt` file. The preflight now refuses to start on a
-> reference that carries `_alt` contigs without an `.alt` file beside it, which
-> is the check that would have caught this at minute zero instead of after the
-> benchmark. To reproduce the defective baseline deliberately:
->
-> ```bash
-> HG002_REF_NAME=Homo_sapiens_assembly38.fasta \
-> HG002_ALLOW_ALT_WITHOUT_ALT_FILE=1 \
->   bash run_parabricks_hg002.sh --preflight
-> ```
+> **Resolved in iteration 2** by switching to the no-ALT analysis set above.
+> The historical automated workflow checked for the missing `.alt` file.
+> The simple script uses the no-ALT reference explicitly.
 
 ```
 https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.fasta.64.amb
