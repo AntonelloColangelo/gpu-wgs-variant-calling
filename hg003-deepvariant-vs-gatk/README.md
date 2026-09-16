@@ -30,8 +30,8 @@ trio it never trained on — the only fair ground for this test.
 | INDEL F1 | 0.9913 | 0.9959 | +0.0046 |
 
 Both classes improve on both axes at once — usually precision gains cost
-sensitivity, not here. Full numbers: [`giab/haplotypecaller/giab_benchmark.json`](giab/haplotypecaller/giab_benchmark.json),
-[`giab/deepvariant/giab_benchmark.json`](giab/deepvariant/giab_benchmark.json).
+sensitivity, not here. Full `hap.py` results (CSV): [`giab/haplotypecaller/happy.summary.csv`](giab/haplotypecaller/happy.summary.csv),
+[`giab/deepvariant/happy.summary.csv`](giab/deepvariant/happy.summary.csv).
 
 ![F1 for SNP and INDEL, HaplotypeCaller vs DeepVariant](figures/fig1_f1.png)
 
