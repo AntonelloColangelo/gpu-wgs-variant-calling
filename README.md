@@ -14,6 +14,26 @@ paired FASTQ → fq2bam → BAM → bqsr → HaplotypeCaller → gVCF → Genoty
 **[Setup and commands](docs/parabricks-basic-commands.md)** ·
 **[HG003 caller comparison](hg003-deepvariant-vs-gatk/README.md)**
 
+## The Hardware and Software I used
+
+I ran these experiments on my Lenovo Legion 5 15ARH7H, with an external
+RTX 3090 connected through an OCuLink PCIe dock.
+
+| Component | My setup |
+|---|---|
+| Laptop | Lenovo Legion 5 15ARH7H |
+| CPU | AMD Ryzen 5 6600H — 6 cores, 12 threads; 10 exposed to WSL2 |
+| GPU | 1 × NVIDIA RTX 3090, 24 GB VRAM, connected through an OCuLink external PCIe dock |
+| System memory | 32 GB RAM (31.2 GB reported), with 27 GB allocated to WSL2 |
+| Host OS | Windows 11 |
+| Analysis environment | Ubuntu 24.04 under WSL2, Docker Desktop |
+| Swap | 64 GB |
+
+The laptop's internal RTX 3060 was disabled so that the calculations used
+only the external RTX 3090.
+
+<img width="1000" height="1333" alt="My Lenovo Legion 5 and external RTX 3090 hardware setup" src="https://github.com/user-attachments/assets/d0f229cd-159d-4572-b4a5-c2e0110f1cc8" />
+
 ## Run the analysis
 
 Use a Bash terminal in Linux or Ubuntu WSL2, with Docker and NVIDIA GPU access.
