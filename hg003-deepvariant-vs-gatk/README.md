@@ -1,4 +1,4 @@
-# DeepVariant vs. GATK HaplotypeCaller on HG003 — a clean rematch
+# DeepVariant vs. GATK HaplotypeCaller on HG003 
 
 **Sample**: HG003 / NA24149, GIAB Ashkenazim trio (father), Illumina NovaSeq PCR-free 35x
 **Same BAM, same truth set, same BED — the only variable is the variant caller.**
