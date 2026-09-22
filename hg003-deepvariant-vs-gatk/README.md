@@ -16,7 +16,7 @@ This project already evaluated DeepVariant once, for the main HG002 run, and
 dropped the comparison: Google's public DeepVariant WGS model is trained on
 GIAB samples HG001–HG007 *except HG003*. Benchmarking it against HG002 would
 have graded it on data it had already seen. HG003 is the one genome in the
-trio it never trained on — the only fair ground for this test.
+trio it never trained on , the only fair ground for this test.
 
 ## Accuracy against GIAB v4.2.1 (hap.py / vcfeval, chr1–22 high-confidence BED)
 
@@ -29,8 +29,7 @@ trio it never trained on — the only fair ground for this test.
 | INDEL precision | 0.9919 | 0.9976 | +0.0057 |
 | INDEL F1 | 0.9913 | 0.9959 | +0.0046 |
 
-Both classes improve on both axes at once — usually precision gains cost
-sensitivity, not here. Full `hap.py` results (CSV): [`giab/haplotypecaller/happy.summary.csv`](giab/haplotypecaller/happy.summary.csv),
+Both classes improve on both axes at once . Full `hap.py` results (CSV): [`giab/haplotypecaller/happy.summary.csv`](giab/haplotypecaller/happy.summary.csv),
 [`giab/deepvariant/happy.summary.csv`](giab/deepvariant/happy.summary.csv).
 
 ![F1 for SNP and INDEL, HaplotypeCaller vs DeepVariant](figures/fig1_f1.png)
@@ -54,7 +53,7 @@ expected Ti/Tv is 2.103 (HaplotypeCaller 1.962, DeepVariant 1.979).
 ## Runtime
 
 Variant calling: **86 min (DeepVariant) vs. 4h 24m (HaplotypeCaller)** on the
-same RTX 3090 — about **3x faster**, not the predicted outcome since
+same RTX 3090 , about **3x faster**, not the predicted outcome since
 DeepVariant does more per-site work (pileup images + CNN inference). The gain
 comes from GPU parallelism that HaplotypeCaller barely uses. DeepVariant also
 needs no BQSR and no hard filtering, removing two pipeline stages worth ~18
@@ -87,7 +86,7 @@ rejects the call independently, without needing to.
 ## Takeaways
 
 - DeepVariant replaces HaplotypeCaller with no tradeoff here: better recall
-  *and* precision on both variant classes, 3x faster, same hardware.
+  *and* precision on both variant classes, 3x faster.
 - Hard filtering and VQSR become moot: DeepVariant's unfiltered precision
   (0.9986) beats HaplotypeCaller's best filtered result. Its `ALL` and
   `PASS` benchmark rows are identical.
@@ -107,7 +106,7 @@ reported variants are not a clinical interpretation.*
 
 Run from the repository root. Prepare HG003 FASTQ and its actual read group,
 then edit those inputs in `run_parabricks.sh` and run it to produce the BAM and
-HaplotypeCaller VCF. The defaults in that script describe HG002, not HG003.
+HaplotypeCaller VCF. The defaults in that script describe HG002.
 Run DeepVariant on the HG003 BAM with:
 
 ```bash
