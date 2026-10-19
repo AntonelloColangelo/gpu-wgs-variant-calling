@@ -34,6 +34,10 @@ only the external RTX 3090.
 
 <img width="1000" height="1333" alt="My Lenovo Legion 5 and external RTX 3090 hardware setup" src="https://github.com/user-attachments/assets/d0f229cd-159d-4572-b4a5-c2e0110f1cc8" />
 
+I usually connect to this machine remotely from an older Huawei MateBook 14.
+My notes on tuning its Linux kernel are in
+[matebook-not-dead-yet](https://github.com/AntonelloColangelo/matebook-not-dead-yet).
+
 ## Run the analysis
 
 Use a Bash terminal in Linux or Ubuntu WSL2, with Docker and NVIDIA GPU access.
